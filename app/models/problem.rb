@@ -26,7 +26,7 @@ class Problem < ActiveRecord::Base
  def image_at(x,y)
    koma = self.send("pos_#{x}#{y}")
    return "/komaimages/empty.png" unless koma
-   player = koma > 16 ? "G" : "S"
+   player = koma >= GOTE ? "G" : "S"
    type = KOMA_IMAGE_NAMES[koma & 15]
    "/komaimages/#{player}#{type}.png"
  end
