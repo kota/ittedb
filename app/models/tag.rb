@@ -1,3 +1,3 @@
 class Tag < ActiveRecord::Base
-  has :problem, :through => :problems_to_tags
+  has_many :problem, :through => :problems_to_tags
 end
