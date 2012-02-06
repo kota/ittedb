@@ -1,0 +1,12 @@
+<div style="background-image:url(/komaimages/masu_dot.png);width:200px;height:200px;background-repeat:no-repeat;">
+<% 1.upto(4) do |y| %>
+  <% 4.downto(1) do |x| %>
+    <img src="<%=@problem.image_at(x,y) %>"/>
+  <% end %>
+  <br/>
+<% end %>
+<div/>
+<br/>
+<br/>
+<br/>
+<img src="<%=@problem.answer_image %>"/>

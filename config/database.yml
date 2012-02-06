@@ -1,0 +1,17 @@
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: itte_d
+  pool: 5
+  username: root
+  password:
+
+test:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: itte_p
+  pool: 5
+  username: root
+  password:

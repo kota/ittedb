@@ -1,0 +1,16 @@
+<%= form_tag "/problems/search" do %>
+  <%= text_field_tag :search_word %>
+  <%= submit_tag "検索" %>
+<% end %>
+
+<% @problems.each do |problem| %>
+  <div style="background-image:url(/komaimages/masu_dot.png);width:200px;height:200px;background-repeat:no-repeat;">
+  <% 1.upto(4) do |y| %>
+    <% 4.downto(1) do |x| %>
+      <img src="<%= problem.image_at(x,y) %>"/>
+    <% end %>
+    <br/>
+  <% end %>
+  <div/>
+  <img src="<%= problem.answer_image %>"/>
+<% end %>
