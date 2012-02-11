@@ -24,161 +24,237 @@ class Problem < ActiveRecord::Base
 
   GOTE = 16
 
- def image_at(x,y)
-   koma = self.send("pos_#{x}#{y}")
-   return "/komaimages/empty.png" unless koma
-   player = koma >= GOTE ? "G" : "S"
-   type = KOMA_IMAGE_NAMES[koma & 15]
-   "/komaimages/#{player}#{type}.png"
- end
+  def update_by_h_params(params)
+    unless params[:answer].empty?
+      params[:answer] = Problem.build_answer_hash(params[:answer])
+    end
+    1.upto(4).each do |x|
+      1.upto(4).each do |y|
+        unless params["pos_#{x}#{y}"].empty?
+          params["pos_#{x}#{y}"] = Problem.build_koma(params["pos_#{x}#{y}"])
+        end
+      end
+    end
+    self.update_attributes(params)
+  end
 
- def answer_image
-   "/komaimages/S#{KOMA_IMAGE_NAMES[hand.to_i]}.png"
- end
+  def self.build_answer_hash(label)
+    #ex. 12(00) 1  12香打 => {:x => 1,:y => 2,:from_x => 0,:from_y => 0,:koma => 1,:drop => true}
+    #ex. 32(33) 3  32銀成 => {:x => 3,:y => 2,:from_x => 3,:from_y => 3,:koma => 3,:drop => false}
+    return "" if label.empty?
 
- def self.convert_text_file(file)
-   problem = nil
-   row = 0
-   file.each do |line|
-     if /^-----/ =~ line
-       problem.save if problem
-       row = 0
-       problem = Problem.new
-       next
-     end
-     #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
-     if /\|/ =~ line
-       chars = line.split(//)
-       chars.shift #行頭の|を取り除く
-       pieces = []
-       9.times do |col|
-         left = chars.shift #" " or "v"
-         right = chars.shift # "・" or "玉"など
-         unless /・/u =~ right #マスが空でなければ
-           player = left == ' ' ? 0 : 1
-           koma = KOMAS[right]
-           pieces << {:x => col, :y => row, :player => player, :koma => koma} 
-           koma += 16 if player == 1
-           x = 9 - col
-           y = row + 1
-           problem.send("pos_#{x.to_s}#{y.to_s}=",koma.to_i)
-         end
-       end
-       row += 1
-     elsif /(先手の持駒|下手の持駒)：(.*)/ =~ line
-       problem.hand = KOMAS[$2.split(//)[0]]
-     elsif /答え：(.*)/ =~ line
-       answer_elements = $1.split(//)
-       problem.answer = {:x => answer_elements[0],
-                         :y => answer_elements[1],
-                         :koma => KOMAS[answer_elements[2]],
-                         :drop => answer_elements.size > 2 && answer_elements[3] == '打'}
-     end
-   end
- end
+    x = label[0].to_i
+    y = label[1].to_i
+    from_x = 0
+    from_y = 0
+    if /\(([0-9]{2})\)/ =~ label
+      from_x = $1[0].to_i
+      from_y = $1[1].to_i
+    end
+    drop = from_x == 0 && from_y == 0
+    
 
-# katagami_fileの例
-# 腹金  <= ファイルの一行目にタグ用文字列
-#
-# 後手の持駒：飛二　角二　金三　銀四　桂四　香三　歩十六　
-#   ９ ８ ７ ６ ５ ４ ３ ２ １
-# +---------------------------+
-# | ・ ・ ・ ・ ・ ・ ・ ・v香|一
-# | ・ ・ ・ ・ ・ ・ ・ ・v玉|二
-# | ・ ・ ・ ・ ・ ・ ・ 歩v歩|三
-# | ・ ・ ・ ・ ・ ・ ・ ・ ・|四
-# | ・ ・ ・ ・ ・ ・ ・ ・ ・|五
-# | ・ ・ ・ ・ ・ ・ ・ ・ ・|六
-# | ・ ・ ・ ・ ・ ・ ・ ・ ・|七
-# | ・ ・ ・ ・ ・ ・ ・ ・ ・|八
-# | ・ ・ ・ ・ ・ ・ ・ ・ ・|九
-# +---------------------------+
-# 先手の持駒：金　
-# 手数＝0    まで
+    promote = !!(/n/ =~ label)
+    /([0-9]*)/ =~ label.split(' ')[1]
+    koma = $1.to_i
 
- def self.convert_katagami_file(file)
-   problem = nil
-   row = 0
-   tag_name = file.gets.strip
-   tag = tag_name != "" ? Tag.create(:name => tag_name) : nil
+    {:x => x,:y => y,:from_x => from_x,:from_y => from_y,
+     :koma => koma,:drop => drop, :promote => promote}
+  end
 
-   file.each do |line|
-     if /^\s*$/ =~ line
-       if problem
-         problem.save 
-       end
-       row = 0
-       problem = Problem.new
-       problem.tags << tag unless tag.nil?
-       next
-     end
-     #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
-     if /\|/ =~ line
-       chars = line.split(//)
-       chars.shift #行頭の|を取り除く
-       pieces = []
-       9.times do |col|
-         left = chars.shift #" " or "v"
-         right = chars.shift # "・" or "玉"など
-         unless /・/u =~ right #マスが空でなければ
-           player = left == ' ' ? 0 : 1
-           koma = KOMAS[right]
-           pieces << {:x => col, :y => row, :player => player, :koma => koma} 
-           koma += 16 if player == 1
-           x = 9 - col
-           y = row + 1
-           problem.send("pos_#{x.to_s}#{y.to_s}=",koma.to_i)
-         end
-       end
-       row += 1
-     elsif /(先手の持駒|下手の持駒)：(.*)/ =~ line
-       problem.hand = KOMAS[$2.split(//)[0]]
-     #答えは入力しない
-     end
-   end
- end
+  def self.build_koma(label)
+   /([0-9]+)/ =~ label
+   koma = $1.to_i
+   koma += GOTE if /v/ =~ label
+   koma += 8 if /n/ =~ label
+   koma
+  end
+
+  def koma_label_at(x,y)
+    koma = self["pos_#{x}#{y}"]
+    return '' unless koma
+    options = ""
+    if koma >= GOTE 
+      koma -= GOTE
+      options += "v"
+    end
+    if koma >= 8 #成り
+      koma -= 8
+      options += "n" 
+    end
+    "#{options}#{koma}"
+  end
+
+  def answer_label
+    return "" if self.answer.nil?
+    from = self.answer[:drop] ? "(00)" : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"
+    promote = self.answer[:promote] ? 'n' : ''
+    "#{self.answer[:x]}#{self.answer[:y]}#{from} #{self.answer[:koma]}#{promote}"
+  end
+
+  def answer_h_label
+    promote = self.answer[:promote] ? '成' : ''
+    drop = self.answer[:drop] ? "打" : ''
+    from = self.answer[:drop] ? '' : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"
+    koma = KOMAS.key(self.answer[:koma].to_i)
+    "#{self.answer[:x]}#{self.answer[:y]}#{from} #{koma}#{promote}#{drop}"
+  end
+
+  def image_at(x,y)
+    koma = self.send("pos_#{x}#{y}")
+    return "/komaimages/empty.png" unless koma
+    player = koma >= GOTE ? "G" : "S"
+    type = KOMA_IMAGE_NAMES[koma & 15]
+    "/komaimages/#{player}#{type}.png"
+  end
+
+  def answer_image
+    "/komaimages/S#{KOMA_IMAGE_NAMES[hand.to_i]}.png"
+  end
+
+  def self.convert_text_file(file)
+    problem = nil
+    row = 0
+    file.each do |line|
+      if /^-----/ =~ line
+        problem.save if problem
+        row = 0
+        problem = Problem.new
+        next
+      end
+      #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
+      if /\|/ =~ line
+        chars = line.split(//)
+        chars.shift #行頭の|を取り除く
+        pieces = []
+        9.times do |col|
+          left = chars.shift #" " or "v"
+          right = chars.shift # "・" or "玉"など
+          unless /・/u =~ right #マスが空でなければ
+            player = left == ' ' ? 0 : 1
+            koma = KOMAS[right]
+            pieces << {:x => col, :y => row, :player => player, :koma => koma} 
+            koma += 16 if player == 1
+            x = 9 - col
+            y = row + 1
+            problem.send("pos_#{x.to_s}#{y.to_s}=",koma.to_i)
+          end
+        end
+        row += 1
+      elsif /(先手の持駒|下手の持駒)：(.*)/ =~ line
+        problem.hand = KOMAS[$2.split(//)[0]]
+      elsif /答え：(.*)/ =~ line
+        answer_elements = $1.split(//)
+        problem.answer = {:x => answer_elements[0],
+                          :y => answer_elements[1],
+                          :koma => KOMAS[answer_elements[2]],
+                          :drop => answer_elements.size > 2 && answer_elements[3] == '打'}
+      end
+    end
+  end
+
+#  katagami_fileの例
+#  腹金  <= ファイルの一行目にタグ用文字列
+# 
+#  後手の持駒：飛二　角二　金三　銀四　桂四　香三　歩十六　
+#    ９ ８ ７ ６ ５ ４ ３ ２ １
+#  +---------------------------+
+#  | ・ ・ ・ ・ ・ ・ ・ ・v香|一
+#  | ・ ・ ・ ・ ・ ・ ・ ・v玉|二
+#  | ・ ・ ・ ・ ・ ・ ・ 歩v歩|三
+#  | ・ ・ ・ ・ ・ ・ ・ ・ ・|四
+#  | ・ ・ ・ ・ ・ ・ ・ ・ ・|五
+#  | ・ ・ ・ ・ ・ ・ ・ ・ ・|六
+#  | ・ ・ ・ ・ ・ ・ ・ ・ ・|七
+#  | ・ ・ ・ ・ ・ ・ ・ ・ ・|八
+#  | ・ ・ ・ ・ ・ ・ ・ ・ ・|九
+#  +---------------------------+
+#  先手の持駒：金　
+#  手数＝0    まで
+
+  def self.convert_katagami_file(file)
+    problem = nil
+    row = 0
+    tag_name = file.gets.strip
+    tag = tag_name != "" ? Tag.create(:name => tag_name) : nil
+
+    file.each do |line|
+      if /^\s*$/ =~ line
+        if problem
+          problem.save 
+        end
+        row = 0
+        problem = Problem.new
+        problem.tags << tag unless tag.nil?
+        next
+      end
+      #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
+      if /\|/ =~ line
+        chars = line.split(//)
+        chars.shift #行頭の|を取り除く
+        pieces = []
+        9.times do |col|
+          left = chars.shift #" " or "v"
+          right = chars.shift # "・" or "玉"など
+          unless /・/u =~ right #マスが空でなければ
+            player = left == ' ' ? 0 : 1
+            koma = KOMAS[right]
+            pieces << {:x => col, :y => row, :player => player, :koma => koma} 
+            koma += 16 if player == 1
+            x = 9 - col
+            y = row + 1
+            problem.send("pos_#{x.to_s}#{y.to_s}=",koma.to_i)
+          end
+        end
+        row += 1
+      elsif /(先手の持駒|下手の持駒)：(.*)/ =~ line
+        problem.hand = KOMAS[$2.split(//)[0]]
+      #答えは入力しない
+      end
+    end
+  end
 
 
- # 生データをTitaniumアプリ用に加工するときに使った処理
- # def self.convert_text(text)
- #   problems = []
- #   problem = {}
- #   row = 0
- #   text.each do |line|
- #     if /^-----/ =~ line
- #       problems << problem #problem.to_json
- #       row = 0
- #       problem = {:mochigoma => [], :ban => [], :answer => []}
- #       next
- #     end
- #     #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
- #     if /\|/ =~ line
- #       chars = line.split(//)
- #       chars.shift #行頭の|を取り除く
- #       pieces = []
- #       9.times do |col|
- #         left = chars.shift #" " or "v"
- #         right = chars.shift # "・" or "玉"など
- #         unless /・/u =~ right #マスが空でなければ
- #           player = left == ' ' ? 0 : 1
- #           koma = KOMAS[right]
- #           pieces << {:x => col, :y => row, :player => player, :koma => koma} 
- #         end
- #       end
- #       problem[:ban] += pieces if pieces.size > 0
- #       row += 1
- #     elsif /(先手の持駒|下手の持駒)：(.*)/ =~ line
- #       problem[:mochigoma] << KOMAS[$2.split(//)[0]]
- #     elsif /答え：(.*)/ =~ line
- #       answer_elements = $1.split(//)
- #       problem[:answer] << {:x => answer_elements[0],
- #                            :y => answer_elements[1],
- #                            :koma => KOMAS[answer_elements[2]],
- #                            :drop => answer_elements.size > 2 && answer_elements[3] == '打'}
- #     end
- #   end
- #   problems.shift
- #   problems
- # end
+  # 生データをTitaniumアプリ用に加工するときに使った処理
+  # def self.convert_text(text)
+  #   problems = []
+  #   problem = {}
+  #   row = 0
+  #   text.each do |line|
+  #     if /^-----/ =~ line
+  #       problems << problem #problem.to_json
+  #       row = 0
+  #       problem = {:mochigoma => [], :ban => [], :answer => []}
+  #       next
+  #     end
+  #     #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
+  #     if /\|/ =~ line
+  #       chars = line.split(//)
+  #       chars.shift #行頭の|を取り除く
+  #       pieces = []
+  #       9.times do |col|
+  #         left = chars.shift #" " or "v"
+  #         right = chars.shift # "・" or "玉"など
+  #         unless /・/u =~ right #マスが空でなければ
+  #           player = left == ' ' ? 0 : 1
+  #           koma = KOMAS[right]
+  #           pieces << {:x => col, :y => row, :player => player, :koma => koma} 
+  #         end
+  #       end
+  #       problem[:ban] += pieces if pieces.size > 0
+  #       row += 1
+  #     elsif /(先手の持駒|下手の持駒)：(.*)/ =~ line
+  #       problem[:mochigoma] << KOMAS[$2.split(//)[0]]
+  #     elsif /答え：(.*)/ =~ line
+  #       answer_elements = $1.split(//)
+  #       problem[:answer] << {:x => answer_elements[0],
+  #                            :y => answer_elements[1],
+  #                            :koma => KOMAS[answer_elements[2]],
+  #                            :drop => answer_elements.size > 2 && answer_elements[3] == '打'}
+  #     end
+  #   end
+  #   problems.shift
+  #   problems
+  # end
 
 end
