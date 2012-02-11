@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 class Problem < ActiveRecord::Base
-  has_many :tags, :through => :problems_to_tags
+  has_many :problem_to_tags
+  has_many :tags, :through => :problem_to_tags
   serialize :answer
 
   KOMAS = {"歩" => 0,
@@ -75,6 +76,68 @@ class Problem < ActiveRecord::Base
      end
    end
  end
+
+# katagami_fileの例
+# 腹金  <= ファイルの一行目にタグ用文字列
+#
+# 後手の持駒：飛二　角二　金三　銀四　桂四　香三　歩十六　
+#   ９ ８ ７ ６ ５ ４ ３ ２ １
+# +---------------------------+
+# | ・ ・ ・ ・ ・ ・ ・ ・v香|一
+# | ・ ・ ・ ・ ・ ・ ・ ・v玉|二
+# | ・ ・ ・ ・ ・ ・ ・ 歩v歩|三
+# | ・ ・ ・ ・ ・ ・ ・ ・ ・|四
+# | ・ ・ ・ ・ ・ ・ ・ ・ ・|五
+# | ・ ・ ・ ・ ・ ・ ・ ・ ・|六
+# | ・ ・ ・ ・ ・ ・ ・ ・ ・|七
+# | ・ ・ ・ ・ ・ ・ ・ ・ ・|八
+# | ・ ・ ・ ・ ・ ・ ・ ・ ・|九
+# +---------------------------+
+# 先手の持駒：金　
+# 手数＝0    まで
+
+ def self.convert_katagami_file(file)
+   problem = nil
+   row = 0
+   tag_name = file.gets.strip
+   tag = tag_name != "" ? Tag.create(:name => tag_name) : nil
+
+   file.each do |line|
+     if /^\s*$/ =~ line
+       if problem
+         problem.save 
+       end
+       row = 0
+       problem = Problem.new
+       problem.tags << tag unless tag.nil?
+       next
+     end
+     #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
+     if /\|/ =~ line
+       chars = line.split(//)
+       chars.shift #行頭の|を取り除く
+       pieces = []
+       9.times do |col|
+         left = chars.shift #" " or "v"
+         right = chars.shift # "・" or "玉"など
+         unless /・/u =~ right #マスが空でなければ
+           player = left == ' ' ? 0 : 1
+           koma = KOMAS[right]
+           pieces << {:x => col, :y => row, :player => player, :koma => koma} 
+           koma += 16 if player == 1
+           x = 9 - col
+           y = row + 1
+           problem.send("pos_#{x.to_s}#{y.to_s}=",koma.to_i)
+         end
+       end
+       row += 1
+     elsif /(先手の持駒|下手の持駒)：(.*)/ =~ line
+       problem.hand = KOMAS[$2.split(//)[0]]
+     #答えは入力しない
+     end
+   end
+ end
+
 
  # 生データをTitaniumアプリ用に加工するときに使った処理
  # def self.convert_text(text)

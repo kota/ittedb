@@ -29,7 +29,7 @@ class CreateProblems < ActiveRecord::Migration
       t.string :name
     end
 
-    create_table :problems_to_tags do |t|
+    create_table :problem_to_tags do |t|
       t.references :problem
       t.references :tag
     end

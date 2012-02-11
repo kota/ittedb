@@ -13,6 +13,11 @@
 
 ActiveRecord::Schema.define(:version => 20120206145106) do
 
+  create_table "problem_to_tags", :force => true do |t|
+    t.integer "problem_id"
+    t.integer "tag_id"
+  end
+
   create_table "problems", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -36,11 +41,6 @@ ActiveRecord::Schema.define(:version => 20120206145106) do
     t.integer  "pos_44"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "problems_to_tags", :force => true do |t|
-    t.integer "problem_id"
-    t.integer "tag_id"
   end
 
   create_table "tags", :force => true do |t|

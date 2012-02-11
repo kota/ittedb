@@ -4,6 +4,10 @@ class ProblemsController < ApplicationController
     @problems = Problem.all
   end
 
+  def new
+    @problem = Problem.new
+  end
+
   def show
     @problem = Problem.find(params[:id])
   end

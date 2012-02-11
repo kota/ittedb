@@ -2,16 +2,27 @@
   <%= text_field_tag :search_word %>
   <%= submit_tag "検索" %>
 <% end %>
-11玉、32飛、44全(成銀)のような文字列で検索出来ます。
+11玉、32飛、44全(成銀)のような文字列で検索出来ます。<%= link_to "一覧に戻る", :action => :index %>
+<br/>
 
 <% @problems.each do |problem| %>
-  <div style="background-image:url(/komaimages/masu_dot.png);width:200px;height:200px;background-repeat:no-repeat;">
-  <% 1.upto(4) do |y| %>
-    <% 4.downto(1) do |x| %>
-      <img src="<%= problem.image_at(x,y) %>"/>
+  <div style="background-image:url(/komaimages/masu_dot.png);width:200px;height:300;background-repeat:no-repeat;float:left;padding-bottom:20px">
+    <% 1.upto(4) do |y| %>
+      <ul style="width:172px;height:48px;margin:0px;padding:0px">
+      <% 4.downto(1) do |x| %>
+        <li style="width:43px;height:48px;float:left;list-style:none outside;margin:0px">
+          <img src="<%= problem.image_at(x,y) %>" style="width:43px;height:48px;padding-left:0px;padding-right:0px;margin-left:0px;margin-right:0px;"/>
+        </li>
+      <% end %>
+      </ul>
     <% end %>
+    <span>持ち駒:<img src="<%= problem.answer_image %>"/></span>
     <br/>
-  <% end %>
-  <div/>
-  <img src="<%= problem.answer_image %>"/>
+    <span>タグ:
+      <% problem.tags.each do |tag|%>
+        <%= h tag.name %>&nbsp;
+      <% end %>
+    </span>
+    <br/>
+  </div>
 <% end %>

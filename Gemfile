@@ -5,9 +5,9 @@ gem 'rails', '3.1.1'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
-#gem 'mysql2'
+gem 'mysql2'
 #for heroku
-gem 'pg'
+#gem 'pg'
 
 
 # Gems used only for assets and not required
