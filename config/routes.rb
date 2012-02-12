@@ -1,4 +1,6 @@
 ItteDb::Application.routes.draw do
+  resources :categories
+
   resources :tags
 
   # The priority is based upon order of creation:

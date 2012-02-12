@@ -25,15 +25,15 @@ class Problem < ActiveRecord::Base
   GOTE = 16
 
   def update_by_h_params(params)
-    unless params[:answer].empty?
+    unless params[:answer].blank?
       params[:answer] = Problem.build_answer_hash(params[:answer])
     end
-    unless params[:hand].empty?
+    unless params[:hand].blank?
       params[:hand] = Problem.inverse_h_koma(params[:hand])
     end 
     1.upto(4).each do |x|
       1.upto(4).each do |y|
-        unless params["pos_#{x}#{y}"].empty?
+        unless params["pos_#{x}#{y}"].blank?
           params["pos_#{x}#{y}"] = Problem.build_koma(params["pos_#{x}#{y}"])
         end
       end
@@ -44,7 +44,7 @@ class Problem < ActiveRecord::Base
   def self.build_answer_hash(label)
     #ex. 12(00) 1  12香打 => {:x => 1,:y => 2,:from_x => 0,:from_y => 0,:koma => 1,:drop => true}
     #ex. 32(33) 3  32銀成 => {:x => 3,:y => 2,:from_x => 3,:from_y => 3,:koma => 3,:drop => false}
-    return "" if label.empty?
+    return "" if label.blank?
 
     x = label[0].to_i
     y = label[1].to_i
@@ -98,14 +98,14 @@ class Problem < ActiveRecord::Base
   end
 
   def answer_label
-    return "" if self.answer.nil?
+    return "" if self.answer.blank?
     from = self.answer[:drop] ? "(00)" : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"
     promote = self.answer[:promote] ? 'n' : ''
     "#{self.answer[:x]}#{self.answer[:y]}#{from} #{Problem.h_koma(self.answer[:koma])}#{promote}"
   end
 
   def answer_h_label
-    return '' if self.answer.nil?
+    return '' if self.answer.blank?
     promote = self.answer[:promote] ? '成' : ''
     drop = self.answer[:drop] ? "打" : ''
     from = self.answer[:drop] ? '' : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"
@@ -190,19 +190,22 @@ class Problem < ActiveRecord::Base
     row = 0
     tag_name = file.gets.strip
     tag = tag_name != "" ? Tag.create(:name => tag_name) : nil
+    problem_found = false
 
     file.each do |line|
       if /^\s*$/ =~ line
-        if problem
+        if problem && problem_found
           problem.save 
         end
         row = 0
         problem = Problem.new
         problem.tags << tag unless tag.nil?
+        problem_found = false
         next
       end
       #1行 | ・ ・ ・ ・ ・ ・ ・v玉 ・|一
       if /\|/ =~ line
+        problem_found = true
         chars = line.split(//)
         chars.shift #行頭の|を取り除く
         pieces = []

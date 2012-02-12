@@ -1,7 +1,60 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+# -*- coding: utf-8 -*-
+Category.create(:name => "Lv")
+Category.create(:name => "持ち駒")
+Category.create(:name => "王の位置")
+Category.create(:name => "王手の駒")
+Category.create(:name => "位置")
+Category.create(:name => "動き")
+Category.create(:name => "採用")
+Category.create(:name => "その他")
+
+Tag.create(:name => "1(協力王手=詰み)",:category_id => 1)
+Tag.create(:name => "2(逃げられる場所注意)",:category_id => 1)
+Tag.create(:name => "3(守り駒に取られないように注意)",:category_id => 1)
+Tag.create(:name => "4(2,3の複合)",:category_id => 1)
+Tag.create(:name => "5(すかし詰め)",:category_id => 1)
+Tag.create(:name => "6(駒の利きを利用した詰み)",:category_id => 1)
+Tag.create(:name => "7(両王手など特殊な詰み)",:category_id => 1)
+
+Tag.create(:name => "あり",:category_id => 2)
+Tag.create(:name => "なし",:category_id => 2)
+
+Tag.create(:name => "11",:category_id => 3)
+Tag.create(:name => "12",:category_id => 3)
+Tag.create(:name => "13",:category_id => 3)
+Tag.create(:name => "14",:category_id => 3)
+Tag.create(:name => "21",:category_id => 3)
+Tag.create(:name => "22",:category_id => 3)
+Tag.create(:name => "23",:category_id => 3)
+Tag.create(:name => "24",:category_id => 3)
+Tag.create(:name => "31",:category_id => 3)
+Tag.create(:name => "32",:category_id => 3)
+Tag.create(:name => "33",:category_id => 3)
+Tag.create(:name => "34",:category_id => 3)
+Tag.create(:name => "41",:category_id => 3)
+Tag.create(:name => "42",:category_id => 3)
+Tag.create(:name => "43",:category_id => 3)
+Tag.create(:name => "44",:category_id => 3)
+
+Tag.create(:name => "飛",:category_id => 4)
+Tag.create(:name => "角",:category_id => 4)
+Tag.create(:name => "金",:category_id => 4)
+Tag.create(:name => "銀",:category_id => 4)
+Tag.create(:name => "桂",:category_id => 4)
+Tag.create(:name => "香",:category_id => 4)
+Tag.create(:name => "歩",:category_id => 4)
+
+Tag.create(:name => "頭",:category_id => 5)
+Tag.create(:name => "腹",:category_id => 5)
+Tag.create(:name => "肩",:category_id => 5)
+Tag.create(:name => "裾",:category_id => 5)
+Tag.create(:name => "尻",:category_id => 5)
+
+Tag.create(:name => "成",:category_id => 6)
+Tag.create(:name => "不成",:category_id => 6)
+
+Tag.create(:name => "Lite",:category_id => 7)
+Tag.create(:name => "Pro",:category_id => 7)
+Tag.create(:name => "未",:category_id => 7)
+
+Tag.create(:name => "無駄駒あり",:category_id => 8)
