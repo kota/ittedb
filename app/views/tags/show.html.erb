@@ -1,5 +1,5 @@
 <p id="notice"><%= notice %></p>
-カテゴリ:<%= @tag.category.name %><br/>
+カテゴリ:<%= @tag.category.try(:name) %><br/>
 名前:<%= @tag.name %>
 <br/>
 

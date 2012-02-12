@@ -188,8 +188,17 @@ class Problem < ActiveRecord::Base
   def self.convert_katagami_file(file)
     problem = nil
     row = 0
-    tag_name = file.gets.strip
-    tag = tag_name != "" ? Tag.create(:name => tag_name) : nil
+
+    tag_names = file.gets.strip.split(//)
+    tag_names = tag_names.select{|t| t != " " && t != "　"}
+    tags = []
+    koma_tag = Tag.find(:first,:conditions => ['name = ? and category_id = ?',tag_names[0],4]) 
+    tags << koma_tag unless koma_tag.blank?
+    promote_tag = Tag.find(:first,:conditions => ['name = ? and category_id = ?',tag_names[1],6]) 
+    tags << promote_tag unless promote_tag.blank?
+    pos_tag = Tag.find(:first,:conditions => ['name = ? and category_id = ?',tag_names[2],5]) 
+    tags << pos_tag unless pos_tag.blank?
+
     problem_found = false
 
     file.each do |line|
@@ -199,7 +208,9 @@ class Problem < ActiveRecord::Base
         end
         row = 0
         problem = Problem.new
-        problem.tags << tag unless tag.nil?
+        tags.each do |tag|
+          problem.tags << tag unless tag.nil?
+        end
         problem_found = false
         next
       end
@@ -219,6 +230,10 @@ class Problem < ActiveRecord::Base
             koma += 16 if player == 1
             x = 9 - col
             y = row + 1
+            if koma == 7 + GOTE
+              tag = Tag.find(:first,:conditions => ['category_id = ? and name = ?',3,"#{x}#{y}"])
+              problem.tags << tag
+            end
             problem.send("pos_#{x.to_s}#{y.to_s}=",koma.to_i)
           end
         end

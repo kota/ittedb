@@ -45,7 +45,7 @@
       <% end %>
       </ul>
     <% end %>
-    <span>持ち駒:<img src="<%= problem.answer_image %>"/> <%= link_to "編集", edit_problem_path(problem) %></span>
+    <span>ID:<%= problem.id %>&nbsp;<%= link_to "編集", edit_problem_path(problem) %>&nbsp;持ち駒:<img src="<%= problem.answer_image %>"/></span>
     <br/>
     <span>タグ:
       <% problem.tags.each do |tag|%>
