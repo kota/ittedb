@@ -34,19 +34,10 @@
     <% Category.all.each do |category| %>
       <%= h category.name %>:
       <% category.tags.each do |tag| %>
-        <% if category.id == 1 %>
-          <div>
-        <% else %>
-          <span>
-        <% end %>
+        <span>
         <%= check_box_tag :tag_ids, tag.id, @problem.tags.include?(tag), :name => 'problem[tag_ids][]' %>
         <%= label_tag :tag_ids, tag.name %>
-        <% if tag.id == 1 %>
-          </div>
-        <% else %>
-          </span>
-        <% end %>
-
+        </span>
       <% end %>
       <br/>
     <% end %>
