@@ -28,6 +28,9 @@ class Problem < ActiveRecord::Base
     unless params[:answer].empty?
       params[:answer] = Problem.build_answer_hash(params[:answer])
     end
+    unless params[:hand].empty?
+      params[:hand] = Problem.inverse_h_koma(params[:hand])
+    end 
     1.upto(4).each do |x|
       1.upto(4).each do |y|
         unless params["pos_#{x}#{y}"].empty?
@@ -56,7 +59,7 @@ class Problem < ActiveRecord::Base
 
     promote = !!(/n/ =~ label)
     /([0-9]*)/ =~ label.split(' ')[1]
-    koma = $1.to_i
+    koma = Problem.inverse_h_koma($1.to_i)
 
     {:x => x,:y => y,:from_x => from_x,:from_y => from_y,
      :koma => koma,:drop => drop, :promote => promote}
@@ -67,7 +70,7 @@ class Problem < ActiveRecord::Base
    koma = $1.to_i
    koma += GOTE if /v/ =~ label
    koma += 8 if /n/ =~ label
-   koma
+   Problem.inverse_h_koma(koma)
   end
 
   def koma_label_at(x,y)
@@ -82,17 +85,27 @@ class Problem < ActiveRecord::Base
       koma -= 8
       options += "n" 
     end
-    "#{options}#{koma}"
+    "#{options}#{Problem.h_koma(koma)}"
+  end
+
+  #human readableな駒数字
+  def self.h_koma(koma)
+    (koma.to_i + 1).to_s
+  end
+
+  def self.inverse_h_koma(koma)
+    (koma.to_i - 1).to_s
   end
 
   def answer_label
     return "" if self.answer.nil?
     from = self.answer[:drop] ? "(00)" : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"
     promote = self.answer[:promote] ? 'n' : ''
-    "#{self.answer[:x]}#{self.answer[:y]}#{from} #{self.answer[:koma]}#{promote}"
+    "#{self.answer[:x]}#{self.answer[:y]}#{from} #{Problem.h_koma(self.answer[:koma])}#{promote}"
   end
 
   def answer_h_label
+    return '' if self.answer.nil?
     promote = self.answer[:promote] ? '成' : ''
     drop = self.answer[:drop] ? "打" : ''
     from = self.answer[:drop] ? '' : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"

@@ -1,31 +1,31 @@
-<div style="background-image:url(/komaimages/masu_dot.png);width:200px;height:200px;background-repeat:no-repeat;float:left">
+<div style="width:230px;height:200px;background-repeat:no-repeat;float:left">
   <%= form_for @problem do |f|%>
     <div style="padding: 14px 0;">
-      <%= f.text_field :pos_41, :size => 3, :value => @problem.koma_label_at(4,1) %>
-      <%= f.text_field :pos_31, :size => 3, :value => @problem.koma_label_at(3,1) %>
-      <%= f.text_field :pos_21, :size => 3, :value => @problem.koma_label_at(2,1) %>
-      <%= f.text_field :pos_11, :size => 3, :value => @problem.koma_label_at(1,1) %>
+      <%= f.text_field :pos_41, :size => 2, :value => @problem.koma_label_at(4,1) %>
+      <%= f.text_field :pos_31, :size => 2, :value => @problem.koma_label_at(3,1) %>
+      <%= f.text_field :pos_21, :size => 2, :value => @problem.koma_label_at(2,1) %>
+      <%= f.text_field :pos_11, :size => 2, :value => @problem.koma_label_at(1,1) %>
     </div>
     <div style="padding: 14px 0;">
-      <%= f.text_field :pos_42, :size => 3, :value => @problem.koma_label_at(4,2) %>
-      <%= f.text_field :pos_32, :size => 3, :value => @problem.koma_label_at(3,2) %>
-      <%= f.text_field :pos_22, :size => 3, :value => @problem.koma_label_at(2,2) %>
-      <%= f.text_field :pos_12, :size => 3, :value => @problem.koma_label_at(1,2) %>
+      <%= f.text_field :pos_42, :size => 2, :value => @problem.koma_label_at(4,2) %>
+      <%= f.text_field :pos_32, :size => 2, :value => @problem.koma_label_at(3,2) %>
+      <%= f.text_field :pos_22, :size => 2, :value => @problem.koma_label_at(2,2) %>
+      <%= f.text_field :pos_12, :size => 2, :value => @problem.koma_label_at(1,2) %>
     </div>
     <div style="padding: 14px 0;">
-      <%= f.text_field :pos_43, :size => 3, :value => @problem.koma_label_at(4,3) %>
-      <%= f.text_field :pos_33, :size => 3, :value => @problem.koma_label_at(3,3) %>
-      <%= f.text_field :pos_23, :size => 3, :value => @problem.koma_label_at(2,3) %>
-      <%= f.text_field :pos_13, :size => 3, :value => @problem.koma_label_at(1,3) %>
+      <%= f.text_field :pos_43, :size => 2, :value => @problem.koma_label_at(4,3) %>
+      <%= f.text_field :pos_33, :size => 2, :value => @problem.koma_label_at(3,3) %>
+      <%= f.text_field :pos_23, :size => 2, :value => @problem.koma_label_at(2,3) %>
+      <%= f.text_field :pos_13, :size => 2, :value => @problem.koma_label_at(1,3) %>
     </div>
     <div style="padding: 14px 0;">
-      <%= f.text_field :pos_44, :size => 3, :value => @problem.koma_label_at(4,4) %>
-      <%= f.text_field :pos_34, :size => 3, :value => @problem.koma_label_at(3,4) %>
-      <%= f.text_field :pos_24, :size => 3, :value => @problem.koma_label_at(2,4) %>
-      <%= f.text_field :pos_14, :size => 3, :value => @problem.koma_label_at(1,4) %>
+      <%= f.text_field :pos_44, :size => 2, :value => @problem.koma_label_at(4,4) %>
+      <%= f.text_field :pos_34, :size => 2, :value => @problem.koma_label_at(3,4) %>
+      <%= f.text_field :pos_24, :size => 2, :value => @problem.koma_label_at(2,4) %>
+      <%= f.text_field :pos_14, :size => 2, :value => @problem.koma_label_at(1,4) %>
     </div>
     <br/>
-    持ち駒<%= f.text_field :hand, :size => 3%>
+    持ち駒<%= f.text_field :hand, :value => Problem.h_koma(@problem.hand), :size => 3%>
     <br/>
     答え<%= f.text_field :answer, :value => @problem.answer_label ,:size => 10%>
     <%= submit_tag "保存" %>
