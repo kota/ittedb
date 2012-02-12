@@ -1,0 +1,12 @@
+<%= link_to 'トップに戻る', problems_path %><br/>
+<%= link_to '新規タグ', new_tag_path %>
+<br />
+<table>
+<% @tags.each do |tag| %>
+  <tr>
+    <td><%= tag.name %></td>
+    <td><%= link_to '編集', edit_tag_path(tag) %></td>
+    <td><%= link_to '削除', tag, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>

@@ -28,6 +28,14 @@
     持ち駒<%= f.text_field :hand, :value => Problem.h_koma(@problem.hand), :size => 3%>
     <br/>
     答え<%= f.text_field :answer, :value => @problem.answer_label ,:size => 10%>
+    <br/>
+    タグ
+    <% Tag.all.each do |tag| %>
+      <div>
+        <%= check_box_tag :tag_ids, tag.id, @problem.tags.include?(tag), :name => 'problem[tag_ids][]' %>
+        <%= label_tag :tag_ids, tag.name %>
+      </div>
+    <% end %>
     <%= submit_tag "保存" %>
   <% end %>
 </div>
