@@ -4,7 +4,7 @@
 <table>
 <% @tags.each do |tag| %>
   <tr>
-    <td><%= tag.category.name %></td>
+    <td><%= tag.category.try(:name) %></td>
     <td><%= tag.name %></td>
     <td><%= link_to '編集', edit_tag_path(tag) %></td>
     <td><%= link_to '削除', tag, confirm: 'Are you sure?', method: :delete %></td>
