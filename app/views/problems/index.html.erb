@@ -1,8 +1,3 @@
-<%= form_tag "/problems/search" do %>
-  <%= text_field_tag :search_word %>
-  <%= submit_tag "検索" %>
-<% end %>
-11玉、32飛、44全(成銀)のような文字列で検索出来ます。<br/>
 <div>
   <%= form_tag "/problems/search" do %>
     <% Category.all.each do |category| %>
@@ -19,7 +14,7 @@
   <% end %>
 </div>
 
-<%= link_to "一覧に戻る", :action => :index %> <br/>
+<%= link_to "一覧に戻る", :action => :index %> 
 <%= link_to "新しい問題を作る", :action => :new %>
 <%= link_to "タグを編集", tags_path %>
 <%= link_to "タグのカテゴリを編集", categories_path %>
