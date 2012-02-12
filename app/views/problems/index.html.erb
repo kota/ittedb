@@ -38,6 +38,8 @@
     <% end %>
     <span>ID:<%= problem.id %>&nbsp;<%= link_to "編集", edit_problem_path(problem) %>&nbsp;持ち駒:<img src="<%= problem.answer_image %>"/></span>
     <br/>
+    答え:<%= problem.answer_h_label %>
+    <br/>
     <span>タグ:
       <% problem.tags.each do |tag|%>
         <%= h tag.name %>&nbsp;
