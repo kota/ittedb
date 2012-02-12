@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 class ProblemsController < ApplicationController
   def index
-    @problems = Problem.all
+    @problems = Problem.all(:order => "id desc")
   end
 
   def new
@@ -70,8 +70,6 @@ class ProblemsController < ApplicationController
   ##  end
   ##end
 
-
-
   def search
     unless params[:search_word].blank?
       chars = params[:search_word].split(//)
@@ -82,7 +80,7 @@ class ProblemsController < ApplicationController
       raise "Invalid y" if y > 4 || y < 1
       type = Problem::KOMAS[chars[2]]
       @problems = Problem.find(:all,
-                               :conditions => ["pos_#{x}#{y} = ? or pos_#{x}#{y} = ? ",type,type+Problem::GOTE])
+                               :conditions => ["pos_#{x}#{y} = ? or pos_#{x}#{y} = ? ",type,type+Problem::GOTE], :order => "id desc")
     else
       tags = Tag.find(params[:problem][:tag_ids])
       @problems = tags.map{|t| t.problems }.flatten.uniq
