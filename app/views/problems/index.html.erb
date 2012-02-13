@@ -33,9 +33,21 @@
     <% end %>
     <span>ID:<%= problem.id %>&nbsp;<%= link_to "編集", edit_problem_path(problem) %>&nbsp;持ち駒:<img src="<%= problem.answer_image %>"/></span>
     <br/>
-    答え:<%= problem.answer_h_label %>
+    <% if problem.edited? %>
+      <font color="#ffffff">
+    <% end %>
+      答え:<%= problem.answer_h_label %>
+    <% if problem.edited? %>
+      </font>
+    <% end %>
     <br/>
-    <span>タグ:
+
+    <% if problem.edited? %>
+      <span color="#ffffff">
+    <% else %>
+      <span> 
+    <% end %>
+    タグ:
       <% problem.tags.each do |tag|%>
         <%= h tag.name %>&nbsp;
       <% end %>

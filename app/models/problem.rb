@@ -24,6 +24,10 @@ class Problem < ActiveRecord::Base
 
   GOTE = 16
 
+  def edited?
+    !self.tags.find_by_id(50).blank?
+  end
+
   def update_by_h_params(params)
     unless params[:answer].blank?
       params[:answer] = Problem.build_answer_hash(params[:answer])
