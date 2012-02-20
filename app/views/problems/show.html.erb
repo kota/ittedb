@@ -19,6 +19,8 @@
     <% end %>
   </span>
   <br/>
+  <br/>
   <%= link_to "編集", edit_problem_path(@problem) %>
-  <%= link_to "一覧に戻る", problems_path %>
+  <%= link_to "一覧に戻る", problems_path %><br/>
+  <%= link_to "新しい問題を作る", :action => :new %>
 </div>
