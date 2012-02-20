@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 module ApplicationHelper
 
-  def h_answer(problem)
-    if problem.hand
-      image_tag(problem.answer_image)
-    else
-      "(なし)"
-    end
+  def h_hand(problem)
+    image_tag(problem.answer_image)
   end
 
 end

@@ -125,7 +125,7 @@ class Problem < ActiveRecord::Base
   end
 
   def answer_image
-    return "/komaimages/empty.png" if hand.nil?
+    return "/komaimages/nashi.png" if hand.nil?
     "/komaimages/S#{KOMA_IMAGE_NAMES[hand.to_i]}.png"
   end
 

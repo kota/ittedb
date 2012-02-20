@@ -31,7 +31,7 @@
       <% end %>
       </ul>
     <% end %>
-    <span>ID:<%= problem.id %>&nbsp;<%= link_to "編集", edit_problem_path(problem) %>&nbsp;持ち駒:<%= h_answer(problem) %></span>
+    <span>ID:<%= problem.id %>&nbsp;<%= link_to "編集", edit_problem_path(problem) %>&nbsp;持ち駒:<%= h_hand(problem) %></span>
     <br/>
     <% if problem.edited? %>
       <font color="#ffffff">
