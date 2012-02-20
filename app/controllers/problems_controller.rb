@@ -28,48 +28,6 @@ class ProblemsController < ApplicationController
     redirect_to @problem
   end
 
-  ##def create
-  ##  @neko = Neko.new(params[:neko])
-
-  ##  respond_to do |format|
-  ##    if @neko.save
-  ##      format.html { redirect_to @neko, notice: 'Neko was successfully created.' }
-  ##      format.json { render json: @neko, status: :created, location: @neko }
-  ##    else
-  ##      format.html { render action: "new" }
-  ##      format.json { render json: @neko.errors, status: :unprocessable_entity }
-  ##    end
-  ##  end
-  ##end
-
-  ### PUT /nekos/1
-  ### PUT /nekos/1.json
-  ##def update
-  ##  @neko = Neko.find(params[:id])
-
-  ##  respond_to do |format|
-  ##    if @neko.update_attributes(params[:neko])
-  ##      format.html { redirect_to @neko, notice: 'Neko was successfully updated.' }
-  ##      format.json { head :ok }
-  ##    else
-  ##      format.html { render action: "edit" }
-  ##      format.json { render json: @neko.errors, status: :unprocessable_entity }
-  ##    end
-  ##  end
-  ##end
-
-  ### DELETE /nekos/1
-  ### DELETE /nekos/1.json
-  ##def destroy
-  ##  @neko = Neko.find(params[:id])
-  ##  @neko.destroy
-
-  ##  respond_to do |format|
-  ##    format.html { redirect_to nekos_url }
-  ##    format.json { head :ok }
-  ##  end
-  ##end
-
   def search
     unless params[:search_word].blank?
       chars = params[:search_word].split(//)
