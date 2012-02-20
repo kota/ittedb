@@ -32,9 +32,7 @@ class Problem < ActiveRecord::Base
     unless params[:answer].blank?
       params[:answer] = Problem.build_answer_hash(params[:answer])
     end
-    unless params[:hand].blank?
-      params[:hand] = Problem.inverse_h_koma(params[:hand])
-    end 
+    params[:hand] = params[:hand].blank? ? nil : Problem.inverse_h_koma(params[:hand])
     1.upto(4).each do |x|
       1.upto(4).each do |y|
         unless params["pos_#{x}#{y}"].blank?
@@ -94,6 +92,7 @@ class Problem < ActiveRecord::Base
 
   #human readableな駒数字
   def self.h_koma(koma)
+    return '' if koma.nil?
     (koma.to_i + 1).to_s
   end
 
@@ -126,6 +125,7 @@ class Problem < ActiveRecord::Base
   end
 
   def answer_image
+    return "/komaimages/empty.png" if hand.nil?
     "/komaimages/S#{KOMA_IMAGE_NAMES[hand.to_i]}.png"
   end
 
