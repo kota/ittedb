@@ -33,6 +33,10 @@ namespace :problem do
         end
       end
     end
+
+    task :db => :environment do
+      puts Problem.generate_nyaw_problems
+    end
   end
   
 end

@@ -249,6 +249,28 @@ class Problem < ActiveRecord::Base
     end
   end
 
+  def to_nyaw_json
+    problem = {}
+    problem['mochigoma'] = [hand.to_i]
+    problem['answer'] = [self.answer]
+
+    problem['ban'] = []
+    1.upto(4).each do |x|
+      1.upto(4).each do |y|
+        unless (koma = self["pos_#{x}#{y}"]).blank?
+          problem['ban'] << {'x' => x,
+                             'y' => y,
+                             'player' => koma >= GOTE ? 1 : 0,
+                             'koma' => koma & 15}
+        end
+      end
+    end
+    problem
+  end
+
+  def self.generate_nyaw_problems
+    (Problem.all.map(&:to_nyaw_json)).to_json
+  end
 
   # 生データをTitaniumアプリ用に加工するときに使った処理
   # def self.convert_text(text)
