@@ -43,15 +43,15 @@
     <br/>
 
     <% if problem.edited? %>
-      <span style="color:#ffffff">
+      <div style="color:#ffffff">
     <% else %>
-      <span> 
+      <div> 
     <% end %>
     タグ:
       <% problem.tags.each do |tag|%>
         <%= h tag.name %>&nbsp;
       <% end %>
-    </span>
+    </div>
     <br/>
   </div>
 <% end %>
