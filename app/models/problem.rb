@@ -20,7 +20,7 @@ class Problem < ActiveRecord::Base
            "馬" => 12,
            "龍" => 13}
 
-  KOMA_IMAGE_NAMES = ['fu','kyo','kei','gin','kin','kaku','hi','ou','to','nkyo','nkei','ngin','uma','ryu'];
+  KOMA_IMAGE_NAMES = ['fu','kyo','kei','gin','kin','kaku','hi','ou','to','nkyo','nkei','ngin','','uma','ryu'];
 
   GOTE = 16
 
@@ -117,7 +117,7 @@ class Problem < ActiveRecord::Base
   end
 
   def image_at(x,y)
-    koma = self.send("pos_#{x}#{y}")
+    koma = self["pos_#{x}#{y}"]
     return "/komaimages/empty.png" unless koma
     player = koma >= GOTE ? "G" : "S"
     type = KOMA_IMAGE_NAMES[koma & 15]
@@ -252,14 +252,19 @@ class Problem < ActiveRecord::Base
   def to_nyaw_json
     problem = {}
     problem['mochigoma'] = [hand.to_i]
-    problem['answer'] = [self.answer]
+    dup_answer = self.answer.dup
+    unless dup_answer.blank?
+      dup_answer['x'] = dup_answer['x'].to_i
+      dup_answer['y'] = dup_answer['y'].to_i
+    end
+    problem['answer'] = [dup_answer]
 
     problem['ban'] = []
     1.upto(4).each do |x|
       1.upto(4).each do |y|
         unless (koma = self["pos_#{x}#{y}"]).blank?
           problem['ban'] << {'x' => x,
-                             'y' => y,
+                             'y' => y - 1,
                              'player' => koma >= GOTE ? 1 : 0,
                              'koma' => koma & 15}
         end
@@ -269,7 +274,7 @@ class Problem < ActiveRecord::Base
   end
 
   def self.generate_nyaw_problems
-    (Problem.all.map(&:to_nyaw_json)).to_json
+    (Tag.find_by_name("lite").problems.map(&:to_nyaw_json)).to_json
   end
 
   # 生データをTitaniumアプリ用に加工するときに使った処理
