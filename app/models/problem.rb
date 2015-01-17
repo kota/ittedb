@@ -17,12 +17,20 @@ class Problem < ActiveRecord::Base
            "杏" => 9,
            "圭" => 10,
            "全" => 11,
-           "馬" => 12,
-           "龍" => 13}
+           ""   => 12,
+           "馬" => 13,
+           "龍" => 14,
+           "P"  => 15,
+           "N"  => 16,
+           "R"  => 17,
+           "B"  => 18,
+           "Q"  => 19,
+           "K"  => 20}
 
-  KOMA_IMAGE_NAMES = ['fu','kyo','kei','gin','kin','kaku','hi','ou','to','nkyo','nkei','ngin','','uma','ryu'];
+  KOMA_IMAGE_NAMES = ['fu','kyo','kei','gin','kin','kaku','hi','ou','to','nkyo','nkei','ngin','','uma','ryu','pawn','knight','rook','bishop','queen','king'];
 
-  GOTE = 16
+  GOTE = 100
+  NARI = 8
 
   def edited?
     !self.tags.find_by_id(50).blank?
@@ -57,21 +65,25 @@ class Problem < ActiveRecord::Base
       from_y = $1[1].to_i
     end
     drop = from_x == 0 && from_y == 0
-    
 
     promote = !!(/n/ =~ label)
     /([0-9]*)/ =~ label.split(' ')[1]
     koma = Problem.inverse_h_koma($1.to_i)
 
-    {:x => x,:y => y,:from_x => from_x,:from_y => from_y,
-     :koma => koma,:drop => drop, :promote => promote}
+    hash = {:x => x,:y => y,:from_x => from_x,:from_y => from_y,
+            :koma => koma,:drop => drop, :promote => promote}
+
+    match = /=(\d+)/ =~ label
+    hash[:promote_to] = Problem.inverse_h_koma($1.to_i) if match
+
+    hash
   end
 
   def self.build_koma(label)
    /([0-9]+)/ =~ label
    koma = $1.to_i
    koma += GOTE if /v/ =~ label
-   koma += 8 if /n/ =~ label
+   koma += NARI if /n/ =~ label
    Problem.inverse_h_koma(koma)
   end
 
@@ -83,7 +95,7 @@ class Problem < ActiveRecord::Base
       koma -= GOTE
       options += "v"
     end
-    if koma >= 8 #成り
+    if koma >= NARI && koma < 14 #成り
       koma -= 8
       options += "n" 
     end
@@ -103,16 +115,26 @@ class Problem < ActiveRecord::Base
   def answer_label
     return "" if self.answer.blank?
     from = self.answer[:drop] ? "(00)" : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"
-    promote = self.answer[:promote] ? 'n' : ''
+    if self.answer[:promote_to]
+      promote = "=#{Problem.h_koma(self.answer[:promote_to])}"
+    else
+      promote = self.answer[:promote] ? 'n' : ''
+    end
     "#{self.answer[:x]}#{self.answer[:y]}#{from} #{Problem.h_koma(self.answer[:koma])}#{promote}"
   end
 
   def answer_h_label
     return '' if self.answer.blank?
-    promote = self.answer[:promote] ? '成' : ''
     drop = self.answer[:drop] ? "打" : ''
     from = self.answer[:drop] ? '' : "(#{self.answer[:from_x]}#{self.answer[:from_y]})"
     koma = KOMAS.key(self.answer[:koma].to_i)
+
+    if self.answer[:promote_to]
+      promote = "=#{KOMAS.key(self.answer[:promote_to].to_i)}"
+    else
+      promote = self.answer[:promote] ? '成' : ''
+    end
+
     "#{self.answer[:x]}#{self.answer[:y]}#{from} #{koma}#{promote}#{drop}"
   end
 
@@ -120,7 +142,8 @@ class Problem < ActiveRecord::Base
     koma = self["pos_#{x}#{y}"]
     return "/komaimages/empty.png" unless koma
     player = koma >= GOTE ? "G" : "S"
-    type = KOMA_IMAGE_NAMES[koma & 15]
+    koma_type = koma >= GOTE ? koma - GOTE : koma
+    type = KOMA_IMAGE_NAMES[koma_type]
     "/komaimages/#{player}#{type}.png"
   end
 
@@ -266,7 +289,7 @@ class Problem < ActiveRecord::Base
           problem['ban'] << {'x' => x,
                              'y' => y - 1,
                              'player' => koma >= GOTE ? 1 : 0,
-                             'koma' => koma & 15}
+                             'koma' => koma >= GOTE ? koma - GOTE : koma}
         end
       end
     end
