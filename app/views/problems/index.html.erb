@@ -31,7 +31,9 @@
       <% end %>
       </ul>
     <% end %>
-    <span>ID:<%= problem.id %>&nbsp;<%= link_to "編集", edit_problem_path(problem) %>&nbsp;持ち駒:<%= h_hand(problem) %></span>
+    <span>ID:<%= problem.id %>&nbsp;<%= link_to "編集", edit_problem_path(problem) %>&nbsp;持ち駒:<%= h_hand(problem) %></span><br>
+    <span>作成日:<%= l problem.created_at %></span><br>
+    <span>更新日:<%= l problem.updated_at %></span>
     <br/>
     <% if problem.edited? %>
       <font color="#ffffff">

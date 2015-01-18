@@ -25,6 +25,7 @@
       <%= f.text_field :pos_14, :size => 2, :value => @problem.koma_label_at(1,4) %>
     </div>
     <br/>
+
     持ち駒<%= f.text_field :hand, :value => Problem.h_koma(@problem.hand), :size => 3%>
     <br/>
     答え<%= f.text_field :answer, :value => @problem.answer_label ,:size => 10%>
@@ -42,5 +43,32 @@
       <br/>
     <% end %>
   <% end %>
+  <br>
+  駒対応表
+  <table>
+    <tr><th>歩</th><td>1</td></tr>
+    <tr><th>香</th><td>2</td></tr>
+    <tr><th>桂</th><td>3</td></tr>
+    <tr><th>銀</th><td>4</td></tr>
+    <tr><th>金</th><td>5</td></tr>
+    <tr><th>角</th><td>6</td></tr>
+    <tr><th>飛</th><td>7</td></tr>
+    <tr><th>玉</th><td>8</td></tr>
+    <tr><th>王</th><td>8</td></tr>
+    <tr><th>と</th><td>9</td></tr>
+    <tr><th>杏</th><td>10</td></tr>
+    <tr><th>圭</th><td>11</td></tr>
+    <tr><th>全</th><td>12</td></tr>
+    <tr><th>N/A</th><td>13</td></tr>
+    <tr><th>馬</th><td>14</td></tr>
+    <tr><th>龍</th><td>15</td></tr>
+    <tr><th>P </th><td>16</td></tr>
+    <tr><th>N </th><td>17</td></tr>
+    <tr><th>R </th><td>18</td></tr>
+    <tr><th>B </th><td>19</td></tr>
+    <tr><th>Q </th><td>20</td></tr>
+    <tr><th>K </th><td>21</td></tr>
+  </table>
+  その他表記 後手: v, 成り: n
 </div>
 
