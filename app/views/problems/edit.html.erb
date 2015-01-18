@@ -1,25 +1,25 @@
 <%= link_to "一覧に戻る", problems_path %> <br/>
 <%= render 'form' %>
 
-<div style="background-image:url(/komaimages/masu_dot.png);width:200px;height:300;background-repeat:no-repeat;float:left;">
-  <% 1.upto(4) do |y| %>
-    <ul style="width:172px;height:48px;margin:0px;padding:0px">
-    <% 4.downto(1) do |x| %>
-      <li style="width:43px;height:48px;float:left;list-style:none outside;margin:0px">
-        <img src="<%= @problem.image_at(x,y) %>" style="width:43px;height:48px;padding-left:0px;padding-right:0px;margin-left:0px;margin-right:0px;"/>
-      </li>
-    <% end %>
-    </ul>
-  <% end %>
-  <br/>
-  <span>持ち駒:<%= h_hand(@problem) %></span>
-  <br/>
-  <span>答え:<%= h @problem.answer_h_label %></span>
-  <br/>
-  <span>タグ:
-    <% @problem.tags.each do |tag|%>
-      <%= h tag.name %>&nbsp;
-    <% end %>
-  </span>
-  <br/>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
